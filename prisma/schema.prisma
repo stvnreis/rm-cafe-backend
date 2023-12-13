@@ -1,0 +1,68 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["rhel-openssl-1.0.x", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model fornecedores {
+  id        BigInt     @id(map: "pk_fornecedores") @default(autoincrement())
+  descricao String     @db.VarChar(45)
+  produtos  produtos[]
+
+  @@index([descricao], map: "ix_fornecedor_descricao", type: Hash)
+}
+
+model funcionarios {
+  id        BigInt   @id(map: "pk_funcionarios") @default(autoincrement())
+  nome      String   @db.VarChar(45)
+  cpf       String   @db.VarChar(45)
+  senha     String?  @db.VarChar(50)
+  usuario   String?  @db.VarChar(20)
+  id_funcao BigInt?
+  vendas    vendas[]
+}
+
+model itens {
+  id         BigInt   @id(map: "pk_itens") @default(autoincrement())
+  quantidade Int
+  valor      Decimal  @db.Decimal(15, 6)
+  id_produto BigInt
+  id_venda   BigInt
+  produtos   produtos @relation(fields: [id_produto], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_itens_produtos")
+  vendas     vendas   @relation(fields: [id_venda], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_itens_venda")
+
+  @@index([id_venda], map: "ix_venda_item")
+}
+
+model produtos {
+  id                   BigInt       @id(map: "pk_produtos") @default(autoincrement())
+  descricao            String       @db.VarChar(100)
+  valor                Decimal      @db.Decimal(15, 6)
+  quantidade           Int
+  id_fornecedor        BigInt
+  foto_url             String?      @db.VarChar(1000)
+  id_produto_categoria Int?
+  ativo                Boolean?     @default(true)
+  dh_inclusao          DateTime     @default(now()) @db.Timestamp(6)
+  itens                itens[]
+  fornecedores         fornecedores @relation(fields: [id_fornecedor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_produto_fornecedor")
+
+  @@index([id_fornecedor], map: "ix_produto_fornecedor")
+  @@index([quantidade], map: "ix_quantidade_produot")
+}
+
+model vendas {
+  id             BigInt       @id(map: "pk_vendas") @default(autoincrement())
+  ven_horario    DateTime?    @default(now()) @db.Timestamp(6)
+  valor_total    Decimal?     @db.Decimal(7, 2)
+  id_funcionario BigInt
+  itens          itens[]
+  funcionarios   funcionarios @relation(fields: [id_funcionario], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_vendas_funcionarios")
+
+  @@index([ven_horario], map: "ix_horario_venda")
+  @@index([id_funcionario], map: "ix_venda_funcionario")
+}

@@ -1,0 +1,17 @@
+import { Venda } from '../../enterprise/entities/venda';
+import { Funcionario } from '../../enterprise/entities/funcionario';
+import { Produto } from '../../enterprise/entities/produto';
+import { ItemVenda } from '../../enterprise/entities/item-venda';
+
+export type findByIdDomainResponse = {
+  venda: Venda;
+  items: ItemVenda[];
+  produtos: Produto[];
+  funcionario: Funcionario;
+};
+
+export abstract class VendasRepository {
+  abstract create(entity: Venda, itensVenda: ItemVenda[]): Promise<Venda>;
+  abstract fetch(): Promise<Venda[]>;
+  abstract findById(id: number): Promise<findByIdDomainResponse>;
+}

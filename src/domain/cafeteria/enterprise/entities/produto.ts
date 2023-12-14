@@ -7,6 +7,7 @@ export type ProdutoProps = {
   valor: number;
   quantidade: number;
   idFornecedor: UniqueEntityId;
+  idProdutoCategoria: UniqueEntityId;
   fotoUrl: string;
   dhInclusao?: Date;
 };
@@ -23,6 +24,9 @@ export class Produto extends Entity<ProdutoProps> {
   }
   get idFornecedor() {
     return this.props.idFornecedor;
+  }
+  get idProdutoCategoria(): UniqueEntityId {
+    return this.props.idProdutoCategoria;
   }
   get fotoUrl(): string {
     return this.props.fotoUrl;

@@ -8,10 +8,12 @@ import { Injectable } from '@nestjs/common';
 export class PrismaFornecedoresRepository implements FornecedoresRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(entity: Fornecedor): Promise<void> {
+  async create(entity: Fornecedor): Promise<Fornecedor> {
     const data = PrismaFornecedoresMapper.toPrisma(entity);
 
-    await this.prisma.fornecedores.create({ data });
+    const fornecedor = await this.prisma.fornecedores.create({ data });
+
+    return PrismaFornecedoresMapper.toDomain(fornecedor);
   }
 
   async fetch(): Promise<Fornecedor[]> {

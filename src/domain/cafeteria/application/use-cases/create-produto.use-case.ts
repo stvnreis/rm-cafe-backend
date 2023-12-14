@@ -7,6 +7,7 @@ export type CreateProdutoUseCaseRequest = {
   descricao: string;
   fotoUrl: string;
   idFornecedor: number;
+  idProdutoCategoria: number;
   valor: number;
   quantidade: number;
 };
@@ -24,7 +25,10 @@ export class CreateProdutoUseCase {
   ): Promise<CreateProdutoUseCaseResponse> {
     const data = Produto.create({
       ...request,
-      idFornecedor: UniqueEntityId.createFromRaw(BigInt(request.idFornecedor)),
+      idFornecedor: UniqueEntityId.createFromRaw(request.idFornecedor),
+      idProdutoCategoria: UniqueEntityId.createFromRaw(
+        request.idProdutoCategoria,
+      ),
     });
 
     const produto = await this.produtosRepository.create(data);

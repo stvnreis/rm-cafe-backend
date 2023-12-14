@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import {
   VendasRepository,
+  fetchVendasWithRelationResponse,
   findByIdDomainResponse,
 } from 'src/domain/cafeteria/application/repositories/vendas.repository';
 import { PrismaService } from '../prisma.service';
@@ -50,10 +51,19 @@ export class PrismaVendasRepository implements VendasRepository {
     });
   }
 
-  async fetch(): Promise<Venda[]> {
-    const vendas = await this.prisma.vendas.findMany();
+  async fetch(): Promise<fetchVendasWithRelationResponse> {
+    const vendas = await this.prisma.vendas.findMany({
+      include: { funcionarios: true },
+    });
 
-    return vendas.map(PrismaVendaMapper.toDomain);
+    return {
+      vendas: vendas.map((venda) => {
+        return {
+          venda: PrismaVendaMapper.toDomain(venda),
+          funcionario: PrismaFuncionarioMapper.toDomain(venda.funcionarios),
+        };
+      }),
+    };
   }
 
   async findById(id: number): Promise<findByIdDomainResponse> {

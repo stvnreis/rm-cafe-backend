@@ -10,8 +10,15 @@ export type findByIdDomainResponse = {
   funcionario: Funcionario;
 };
 
+export type fetchVendasWithRelationResponse = {
+  vendas: {
+    venda: Venda;
+    funcionario: Funcionario;
+  }[];
+};
+
 export abstract class VendasRepository {
   abstract create(entity: Venda, itensVenda: ItemVenda[]): Promise<Venda>;
-  abstract fetch(): Promise<Venda[]>;
+  abstract fetch(): Promise<fetchVendasWithRelationResponse>;
   abstract findById(id: number): Promise<findByIdDomainResponse>;
 }

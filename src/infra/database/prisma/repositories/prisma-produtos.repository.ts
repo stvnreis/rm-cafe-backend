@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { ProdutosRepository } from 'src/domain/cafeteria/application/repositories/produtos.repository';
+import {
+  FetchWithRelationsOptions,
+  FetchWithRelationsResponse,
+  ProdutosRepository,
+} from 'src/domain/cafeteria/application/repositories/produtos.repository';
 import { Produto } from 'src/domain/cafeteria/enterprise/entities/produto';
 import { PrismaProdutoMapper } from '../mappers/prisma-produto.mapper';
+import { PrismaProdutoCategoriaMapper } from '../mappers/prisma-produto-categoria.mapper';
+import { PrismaFornecedoresMapper } from '../mappers/prisma-fornecedores.mapper';
 
 @Injectable()
 export class PrismaProdutosRepository implements ProdutosRepository {
@@ -20,6 +26,27 @@ export class PrismaProdutosRepository implements ProdutosRepository {
     const produtos = await this.prisma.produtos.findMany();
 
     return produtos.map(PrismaProdutoMapper.toDomain);
+  }
+
+  async fetchWithRelations({
+    dsCategoria,
+  }: FetchWithRelationsOptions): Promise<FetchWithRelationsResponse> {
+    const produtos = await this.prisma.produtos.findMany({
+      include: { produto_categoria: true, fornecedores: true },
+      where: { produto_categoria: { descricao: dsCategoria } },
+    });
+
+    return {
+      produtos: produtos.map((produto) => {
+        return {
+          produto: PrismaProdutoMapper.toDomain(produto),
+          fornecedor: PrismaFornecedoresMapper.toDomain(produto.fornecedores),
+          produtoCategoria: PrismaProdutoCategoriaMapper.toDomain(
+            produto.produto_categoria,
+          ),
+        };
+      }),
+    };
   }
 
   async findByid(id: number): Promise<Produto> {

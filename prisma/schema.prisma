@@ -39,17 +39,18 @@ model itens {
 }
 
 model produtos {
-  id                   BigInt       @id(map: "pk_produtos") @default(autoincrement())
-  descricao            String       @db.VarChar(100)
-  valor                Decimal      @db.Decimal(15, 6)
+  id                   BigInt            @id(map: "pk_produtos") @default(autoincrement())
+  descricao            String            @db.VarChar(100)
+  valor                Decimal           @db.Decimal(15, 6)
   quantidade           Int
   id_fornecedor        BigInt
-  foto_url             String?      @db.VarChar(1000)
-  id_produto_categoria Int?
-  ativo                Boolean?     @default(true)
-  dh_inclusao          DateTime     @default(now()) @db.Timestamp(6)
+  foto_url             String?           @db.VarChar(1000)
+  id_produto_categoria Int
+  ativo                Boolean?          @default(true)
+  dh_inclusao          DateTime          @default(now()) @db.Timestamp(6)
   itens                itens[]
-  fornecedores         fornecedores @relation(fields: [id_fornecedor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_produto_fornecedor")
+  fornecedores         fornecedores      @relation(fields: [id_fornecedor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_produto_fornecedor")
+  produto_categoria    produto_categoria @relation(fields: [id_produto_categoria], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_produto_x_produto_categoria")
 
   @@index([id_fornecedor], map: "ix_produto_fornecedor")
   @@index([quantidade], map: "ix_quantidade_produot")
@@ -65,4 +66,19 @@ model vendas {
 
   @@index([ven_horario], map: "ix_horario_venda")
   @@index([id_funcionario], map: "ix_venda_funcionario")
+}
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model funcoes {
+// }
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+// model imagem {
+// }
+
+/// We could not retrieve columns for the underlying table. Either it has none or you are missing rights to see them. Please check your privileges.
+model produto_categoria {
+  id        Int        @id(map: "pk_produto_categoria") @default(autoincrement())
+  descricao String     @db.VarChar(100)
+  produtos  produtos[]
 }

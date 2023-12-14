@@ -9,10 +9,10 @@ export class FetchVendasController {
   @Get()
   async handle() {
     try {
-      const { data } = await this.fetchVendasUseCase.execute();
+      const { vendas } = await this.fetchVendasUseCase.execute();
 
       return {
-        data: data.map((item) =>
+        data: vendas.map((item) =>
           VendaPresenter.toHttp(item.venda, item.funcionario),
         ),
       };

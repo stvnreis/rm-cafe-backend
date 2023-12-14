@@ -6,7 +6,8 @@ export class PrismaProdutoMapper {
   static toPrisma(entity: Produto): Prisma.produtosUncheckedCreateInput {
     return {
       descricao: entity.descricao,
-      id_fornecedor: entity.idFornecedor.value,
+      id_fornecedor: entity.idFornecedor.toNumber(),
+      id_produto_categoria: entity.idProdutoCategoria.toNumber(),
       quantidade: entity.quantidade,
       valor: entity.valor,
       foto_url: entity.fotoUrl,
@@ -29,6 +30,9 @@ export class PrismaProdutoMapper {
       {
         descricao: raw.descricao,
         idFornecedor: UniqueEntityId.createFromRaw(raw.id_fornecedor),
+        idProdutoCategoria: UniqueEntityId.createFromRaw(
+          raw.id_produto_categoria,
+        ),
         quantidade: raw.quantidade,
         valor: Number(raw.valor),
         fotoUrl: raw.foto_url,

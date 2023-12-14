@@ -10,6 +10,8 @@ import { FuncionariosRepository } from 'src/domain/cafeteria/application/reposit
 import { PrismaFuncionariosRepository } from './prisma/repositories/prisma-funcionarios.repository';
 import { PrismaVendasRepository } from './prisma/repositories/prisma-vendas.repository';
 import { VendasRepository } from 'src/domain/cafeteria/application/repositories/vendas.repository';
+import { ProdutosCategoriaRepository } from 'src/domain/cafeteria/application/repositories/categorias.repository';
+import { PrismaProdutosCategoriaRepository } from './prisma/repositories/prisma-produtos-categoria.repository';
 
 @Global()
 @Module({
@@ -20,6 +22,10 @@ import { VendasRepository } from 'src/domain/cafeteria/application/repositories/
     { provide: ProdutosRepository, useClass: PrismaProdutosRepository },
     { provide: FuncionariosRepository, useClass: PrismaFuncionariosRepository },
     { provide: VendasRepository, useClass: PrismaVendasRepository },
+    {
+      provide: ProdutosCategoriaRepository,
+      useClass: PrismaProdutosCategoriaRepository,
+    },
   ],
   exports: [
     PrismaService,
@@ -28,6 +34,7 @@ import { VendasRepository } from 'src/domain/cafeteria/application/repositories/
     ProdutosRepository,
     FuncionariosRepository,
     VendasRepository,
+    ProdutosCategoriaRepository,
   ],
 })
 export class DatabaseModule {}

@@ -21,8 +21,6 @@ export class AutenticarFuncionarioUseCase {
       where: { usuario: data.user },
     });
 
-    console.log(data.user, funcionario);
-
     if (!funcionario || funcionario.senha !== data.password)
       throw new Error('Usuário ou senha inválido!');
 

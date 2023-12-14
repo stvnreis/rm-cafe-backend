@@ -19,6 +19,10 @@ import { GetBackupController } from './controllers/get-backup.controller';
 import { PrismaBackupService } from '../database/prisma/prisma-backup.service';
 import { EditProdutoController } from './controllers/edit-produto.controller';
 import { EditProdutoUseCase } from 'src/domain/cafeteria/application/use-cases/edit-produto.use-case';
+import { FetchProdutosWithRelationsController } from './controllers/fetch-produtos-with-relations.controller';
+import { FetchProdutosWithRelationsUseCase } from 'src/domain/cafeteria/application/use-cases/fetch-produtos-with-relations.use-case';
+import { FetchProdutosCategoriaController } from './controllers/fetch-produtos-categoria.controller';
+import { FetchProdutosCategoriaUseCase } from 'src/domain/cafeteria/application/use-cases/fetch-produtos-categoria.use-case';
 
 @Module({
   imports: [],
@@ -35,6 +39,8 @@ import { EditProdutoUseCase } from 'src/domain/cafeteria/application/use-cases/e
     FindVendaByIdController,
     GetBackupController,
     EditProdutoController,
+    FetchProdutosWithRelationsController,
+    FetchProdutosCategoriaController,
   ],
   providers: [
     // CreateFornecedorUseCase,
@@ -49,6 +55,8 @@ import { EditProdutoUseCase } from 'src/domain/cafeteria/application/use-cases/e
     FindVendaByIdUseCase,
     PrismaBackupService,
     EditProdutoUseCase,
+    FetchProdutosWithRelationsUseCase,
+    FetchProdutosCategoriaUseCase,
   ],
 })
 export class HttpModule {}

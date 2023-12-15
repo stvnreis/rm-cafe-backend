@@ -18,6 +18,7 @@ describe('Cadastrar produto', () => {
       descricao: produto.descricao,
       fotoUrl: produto.fotoUrl,
       idFornecedor: produto.idFornecedor.toNumber(),
+      idProdutoCategoria: produto.idProdutoCategoria.toNumber(),
       quantidade: produto.quantidade,
       valor: produto.valor,
     });

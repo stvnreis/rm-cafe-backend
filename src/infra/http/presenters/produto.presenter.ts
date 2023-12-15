@@ -1,19 +1,27 @@
+import { ProdutosWithRelations } from 'src/domain/cafeteria/application/repositories/produtos.repository';
 import { Fornecedor } from 'src/domain/cafeteria/enterprise/entities/fornecedor';
 import { Produto } from 'src/domain/cafeteria/enterprise/entities/produto';
 import { ProdutoCategoria } from 'src/domain/cafeteria/enterprise/entities/produto-categoria';
 
 export class ProdutoPresenter {
-  static toHttp(entity: Produto) {
-    return {
-      id: Number(entity.id.value),
-      descricao: entity.descricao,
-      valor: entity.valor,
-      quantidade: entity.quantidade,
-      fotoUrl: entity.fotoUrl,
-      idFornecedor: Number(entity.idFornecedor.value),
-      dhInclusao: entity.dhInclusao,
-      eNovidade: entity.eNovidade,
-    };
+  static toHttp(entity: Produto | ProdutosWithRelations) {
+    if (entity instanceof Produto)
+      return {
+        id: Number(entity.id.value),
+        descricao: entity.descricao,
+        valor: entity.valor,
+        quantidade: entity.quantidade,
+        fotoUrl: entity.fotoUrl,
+        idFornecedor: Number(entity.idFornecedor.value),
+        dhInclusao: entity.dhInclusao,
+        eNovidade: entity.eNovidade,
+      };
+
+    return this.toHttpWithRelations(
+      entity.produto,
+      entity.fornecedor,
+      entity.produtoCategoria,
+    );
   }
 
   static toHttpWithRelations(

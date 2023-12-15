@@ -1,17 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { Produto } from '../../enterprise/entities/produto';
-import { ProdutosRepository } from '../repositories/produtos.repository';
+import {
+  FetchProdutosResponse,
+  ProdutosRepository,
+} from '../repositories/produtos.repository';
+import { FetchProdutosQueryOptions } from 'src/infra/http/controllers/fetch-produtos.controller';
 
-export type FetchProdutosUseCaseResponse = {
-  produtos: Produto[];
-};
+export interface FetchProdutosUseCaseRequest
+  extends FetchProdutosQueryOptions {}
+
+export interface FetchProdutosUseCaseResponse extends FetchProdutosResponse {}
 
 @Injectable()
 export class FetchProdutosUseCase {
   constructor(private readonly produtosRepository: ProdutosRepository) {}
 
-  async execute(): Promise<FetchProdutosUseCaseResponse> {
-    const produtos = await this.produtosRepository.fetch();
+  async execute({
+    relations,
+    ids,
+    dsCategoria,
+  }: FetchProdutosUseCaseRequest): Promise<FetchProdutosUseCaseResponse> {
+    const { produtos } = await this.produtosRepository.fetch({
+      relations,
+      ids,
+      dsCategoria,
+    });
 
     return { produtos };
   }

@@ -1,17 +1,28 @@
-import { ProdutosRepository } from 'src/domain/cafeteria/application/repositories/produtos.repository';
+import {
+  FetchProdutosResponse,
+  ProdutosRepository,
+} from 'src/domain/cafeteria/application/repositories/produtos.repository';
 import { Produto } from 'src/domain/cafeteria/enterprise/entities/produto';
 
 export class InMemoryProdutosRepository implements ProdutosRepository {
   items: Produto[] = [];
 
-  async create(entity: Produto): Promise<void> {
+  async create(entity: Produto): Promise<Produto> {
     this.items.push(entity);
+
+    return entity;
   }
 
-  async fetch(): Promise<Produto[]> {
+  async fetch(): Promise<FetchProdutosResponse> {
     const produtos = this.items;
 
-    return produtos;
+    return { produtos };
+  }
+
+  async delete(id: number): Promise<void> {
+    const index = this.items.findIndex((item) => item.id.toNumber() === id);
+
+    this.items.splice(index, 1);
   }
 
   async findByid(id: number): Promise<Produto> {

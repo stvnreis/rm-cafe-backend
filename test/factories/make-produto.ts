@@ -13,6 +13,8 @@ export function makeProduto(
     {
       descricao: override.descricao ?? faker.word.noun(),
       idFornecedor: override.idFornecedor ?? UniqueEntityId.create(),
+      idProdutoCategoria:
+        override.idProdutoCategoria ?? UniqueEntityId.create(),
       quantidade: override.quantidade ?? 1,
       valor: override.valor ?? faker.number.float(),
       fotoUrl: override.fotoUrl ?? faker.internet.url(),

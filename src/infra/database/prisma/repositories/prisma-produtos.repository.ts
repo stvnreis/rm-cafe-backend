@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import {
-  FetchWithRelationsOptions,
-  FetchWithRelationsResponse,
   ProdutosRepository,
+  FetchProdutosResponse,
+  FetchProdutosOptions,
 } from 'src/domain/cafeteria/application/repositories/produtos.repository';
 import { Produto } from 'src/domain/cafeteria/enterprise/entities/produto';
 import { PrismaProdutoMapper } from '../mappers/prisma-produto.mapper';
 import { PrismaProdutoCategoriaMapper } from '../mappers/prisma-produto-categoria.mapper';
 import { PrismaFornecedoresMapper } from '../mappers/prisma-fornecedores.mapper';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PrismaProdutosRepository implements ProdutosRepository {
@@ -22,28 +23,47 @@ export class PrismaProdutosRepository implements ProdutosRepository {
     return PrismaProdutoMapper.toDomain(produto);
   }
 
-  async fetch(): Promise<Produto[]> {
-    const produtos = await this.prisma.produtos.findMany();
-
-    return produtos.map(PrismaProdutoMapper.toDomain);
-  }
-
-  async fetchWithRelations({
+  async fetch({
+    ids,
+    relations,
     dsCategoria,
-  }: FetchWithRelationsOptions): Promise<FetchWithRelationsResponse> {
+  }: FetchProdutosOptions): Promise<FetchProdutosResponse> {
+    let include: Prisma.produtosInclude;
+    if (relations) {
+      include = {
+        fornecedores: true,
+        produto_categoria: true,
+      };
+    }
+
+    let where: Prisma.produtosWhereInput;
+    if (dsCategoria) {
+      where = {
+        produto_categoria: {
+          descricao: { contains: dsCategoria },
+          id: { in: ids },
+        },
+      };
+    }
+
     const produtos = await this.prisma.produtos.findMany({
-      include: { produto_categoria: true, fornecedores: true },
-      where: { produto_categoria: { descricao: dsCategoria } },
+      where,
+      include,
     });
 
+    if (!relations)
+      return {
+        produtos: produtos.map(PrismaProdutoMapper.toDomain),
+      };
+
     return {
-      produtos: produtos.map((produto) => {
+      produtos: produtos.map((row) => {
         return {
-          produto: PrismaProdutoMapper.toDomain(produto),
-          fornecedor: PrismaFornecedoresMapper.toDomain(produto.fornecedores),
+          produto: PrismaProdutoMapper.toDomain(row),
           produtoCategoria: PrismaProdutoCategoriaMapper.toDomain(
-            produto.produto_categoria,
+            row.produto_categoria,
           ),
+          fornecedor: PrismaFornecedoresMapper.toDomain(row.fornecedores),
         };
       }),
     };

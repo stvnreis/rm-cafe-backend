@@ -3,6 +3,7 @@ import { ItemVenda } from '../../enterprise/entities/item-venda';
 import { Venda } from '../../enterprise/entities/venda';
 import { UniqueEntityId } from 'src/core/entities/unique-entity-id';
 import { VendasRepository } from '../repositories/vendas.repository';
+import { sumArray } from 'src/core/helpers/sum-array';
 
 export type RealizarVendaUseCaseRequest = {
   produtos: {
@@ -22,9 +23,13 @@ export class RealizarVendaUseCase {
     produtos,
     idFuncionario,
   }: RealizarVendaUseCaseRequest): Promise<void> {
+    const valorTotal = sumArray(
+      produtos.map((produto) => produto.quantidade * produto.valor),
+    );
+
     const venda = Venda.create({
       idFuncionario: UniqueEntityId.createFromRaw(idFuncionario),
-      valorTotal: 0,
+      valorTotal,
     });
 
     const items = produtos.map((produto) => {
